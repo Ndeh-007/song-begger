@@ -1,0 +1,7 @@
+{
+  "name": "song-begger",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
