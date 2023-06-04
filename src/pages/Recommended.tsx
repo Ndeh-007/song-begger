@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {
+    IonBadge,
     IonCardHeader, IonCardSubtitle, IonCardTitle,
     IonCol,
     IonContent,
     IonGrid,
-    IonHeader, IonImg, IonItem, IonLabel, IonList, IonListHeader,
+    IonHeader, IonImg, IonItem, IonLabel, IonListHeader,
     IonPage, IonProgressBar,
     IonRow, IonThumbnail,
     IonTitle,
@@ -17,6 +18,7 @@ import {firestore} from "../Firebase";
 
 const Recommended: React.FC = () => {
     const [Songs, setSongs] = useState<ISong[]>([])
+    const [AddedSongs, setAddedSongs] = useState<ISong[]>([])
     const [Loading, setLoading] = useState(false)
 
 
@@ -35,20 +37,28 @@ const Recommended: React.FC = () => {
                     return change.doc.data()
                 }
             })
-            const arr:ISong[] = [...newSongs as ISong[], ...Songs]
-            setSongs(arr)
+            setAddedSongs(newSongs as ISong[])
             setLoading(false)
         })
+
     }, [])
+
+    useEffect(()=>{
+        const s = [...Songs]
+        const a = [...AddedSongs]
+        const n = [...a,...s]
+        setSongs(n)
+    },[AddedSongs])
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Recommended</IonTitle>
+                    <IonBadge slot={"end"} className={'ion-margin-end'}>{Songs.length}</IonBadge>
                 </IonToolbar>
                 {Loading && <IonProgressBar type={"indeterminate"}></IonProgressBar>}
             </IonHeader>
-            <IonContent fullscreen>
+            <IonContent fullscreen  color={"light"} >
                 <IonHeader collapse="condense">
                     <IonToolbar>
                         <IonTitle size="large">Recommended</IonTitle>
@@ -58,9 +68,9 @@ const Recommended: React.FC = () => {
                 <IonGrid className={"ion-no-padding"}>
                     <IonRow className={"ion-align-items-center ion-justify-content-center"}>
                         <IonCol sizeXs={"12"} sizeSm={"12"} sizeMd="8">
-                            <div className={"ion-padding-vertical"}>
-                                <IonList>
-                                    <IonListHeader>Listed From Most recent </IonListHeader>
+                            <div>
+                                <div>
+                                    <IonListHeader>Most recent first. </IonListHeader>
                                     {
                                         Songs.map((item, index) => {
                                             return (
@@ -71,7 +81,7 @@ const Recommended: React.FC = () => {
                                                         </div>
                                                     </IonCol>
                                                     <IonCol>
-                                                        <IonItem lines={"full"} key={index}>
+                                                        <IonItem  color={"light"}  lines={"inset"} key={index}>
                                                             <IonThumbnail slot={"start"}>
                                                                 <IonImg src={item.image}></IonImg>
                                                             </IonThumbnail>
@@ -85,7 +95,7 @@ const Recommended: React.FC = () => {
                                             )
                                         })
                                     }
-                                </IonList>
+                                </div>
                             </div>
                         </IonCol>
                     </IonRow>

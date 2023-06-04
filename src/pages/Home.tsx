@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
     IonActionSheet,
-    IonBadge,
     IonButton,
     IonButtons,
     IonCardHeader,
@@ -17,8 +16,6 @@ import {
     IonImg,
     IonItem,
     IonLabel,
-    IonList,
-    IonListHeader,
     IonModal,
     IonPage,
     IonProgressBar,
@@ -34,7 +31,6 @@ import {
 import {
     arrowBack,
     arrowForward,
-    chevronForward,
     close,
     closeSharp,
     notifications,
@@ -44,11 +40,13 @@ import {ISong} from "../Interface";
 import ExploreContainer from "../components/ExploreContainer";
 import {addRecommendationsToFirestore, ListenForRecommendationsFromRealTimeDatabase} from "../api/manageData";
 import axios from "axios";
+import {LocalImages} from "../images/Images";
 
 const Home: React.FC = () => {
     const [modifyModal, setModifyModal] = useState(false)
     const [Loading, setLoading] = useState(false)
     const [targetAPI, setTargetAPI] = useState<"YouTube" | "Spotify">("Spotify")
+    const [SearchIcon, setSearchIcon] = useState(LocalImages.spotify)
     const selectItemRef = useRef<HTMLIonItemElement>(null)
     const searchBarRef = useRef<HTMLIonSearchbarElement>(null)
     const [searchResults, setSearchResults] = useState<ISong[]>([])
@@ -93,10 +91,9 @@ const Home: React.FC = () => {
         setLoading(false)
     }
 
-    function showAlert(message: string, duration = 5000) {
+    function showAlert(message: string) {
         Toast({
             color: "light",
-            duration,
             message,
             header: "Just so you know...",
             position: "top",
@@ -111,27 +108,6 @@ const Home: React.FC = () => {
             ],
         }).catch(e => console.log(e))
     }
-
-    function showError() {
-        Toast({
-            color: "danger",
-            duration: 3000,
-            message: "Oops. An error occurred. Try again 😊",
-            icon: notifications,
-            header: "Error",
-            position: "top",
-            buttons: [
-                {
-                    role: 'cancel',
-                    icon: closeSharp,
-                    handler: () => {
-                        return
-                    },
-                }
-            ],
-        }).catch(e => console.log(e))
-    }
-
     async function saveRecommendations() {
         setLoading(true)
         for (const song of selectedSongs) {
@@ -165,38 +141,8 @@ const Home: React.FC = () => {
             setSelectedSongs(newArr)
         }
     }
-
-    function requestBrowserNotificationPermission() {
-        if (!Notification) {
-            alert('Desktop notifications not available in your browser. Try Chromium.');
-            return;
-        }
-
-        if (Notification.permission !== 'granted')
-            Notification.requestPermission().then(()=> {
-                return
-            });
-
-    }
-
-    function notifyMe(message: string) {
-        if (Notification.permission !== 'granted')
-            Notification.requestPermission().then(() => {
-                return
-            });
-        else {
-            const notification = new Notification('New Songs Recommend', {
-                icon: notifications,
-                body: message,
-            });
-            notification.onclick = function () {
-                window.open('https://songbeggar.web.app/recommendations');
-            };
-        }
-    }
-
     useEffect(() => {
-        requestBrowserNotificationPermission()
+        // requestBrowserNotificationPermission()
         init().then(() => {
             setLoading(false)
         }).catch(e => {
@@ -210,7 +156,7 @@ const Home: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Find Song</IonTitle>
+                    <IonTitle>Search</IonTitle>
 
                     <IonButtons slot={"end"}>
                         <IonButton id="open-action-sheet">
@@ -226,9 +172,11 @@ const Home: React.FC = () => {
                         backgroundColor:"var(--ion-toolbar-background)"
                     }}>
                         <IonRow className={"ion-justify-content-between"}>
-                            <IonCol size={"10"}>
+                            <IonCol size={"12"}>
                                 <IonToolbar>
-                                    <IonSearchbar ref={searchBarRef} placeholder={`Search with ${targetAPI}`}
+                                    <IonSearchbar
+                                        searchIcon={SearchIcon}
+                                        style={{"--box-shadow":"none"}} color={"light"} ref={searchBarRef} placeholder={`What song are you looking for?`}
                                                   onKeyPress={(e) => {
                                                       if (e.key == "Enter") {
                                                           const value = searchBarRef?.current?.value
@@ -240,32 +188,12 @@ const Home: React.FC = () => {
                                                   }}></IonSearchbar>
                                 </IonToolbar>
                             </IonCol>
-                            <IonCol size={"2"}>
-                                <IonToolbar>
-                                    <IonButtons>
-                                        <IonButton  fill={"solid"} onClick={() => {
-                                            const value = searchBarRef?.current?.value
-                                            handleSearch(value).then(() => {
-                                                setLoading(false)
-                                                return;
-                                            }).catch((e) => {
-                                                showError()
-                                                console.log(e)
-                                                setLoading(false)
-                                            })
-                                        }}>
-                                            <IonIcon slot={"end"} icon={chevronForward}></IonIcon>
-                                            <IonLabel slot={"start"} className={"ion-text-capitalize"}>GO</IonLabel>
-                                        </IonButton>
-                                    </IonButtons>
-                                </IonToolbar>
-                            </IonCol>
                         </IonRow>
                     </IonGrid>
                 </IonToolbar>
                 {Loading && <IonProgressBar type={"indeterminate"}></IonProgressBar>}
             </IonHeader>
-            <IonContent fullscreen>
+            <IonContent fullscreen  color={"light"}>
 
                 <IonHeader collapse="condense">
                     <IonToolbar>
@@ -280,13 +208,17 @@ const Home: React.FC = () => {
                             text: 'YouTube',
                             handler: () => {
                                 setTargetAPI("YouTube");
-                                showAlert("Hehe, filtering by youtube doesn't work. the api/code was more than me 😅😅. Searching will still work, using spotify instead.")
+                                setSearchIcon(LocalImages.youtube)
+                                showAlert("Hehe, filtering by youtube doesn't work. The api/code was more than me 😅😅. Searching will still work, using spotify instead.")
 
                             }
                         },
                         {
                             text: 'Spotify',
-                            handler: () => setTargetAPI("Spotify")
+                            handler: () => {
+                                setTargetAPI("Spotify")
+                                setSearchIcon(LocalImages.spotify)
+                            }
                         },
                         {
                             text: 'Cancel',
@@ -312,12 +244,11 @@ const Home: React.FC = () => {
                     <IonRow className={"ion-align-items-center ion-justify-content-center"}>
                         <IonCol sizeXs={"12"} sizeSm={"12"} sizeMd="8">
                             <div>
-                                <IonList color={"transparent"}>
-                                    <IonListHeader>Results - {targetAPI} </IonListHeader>
+                                <div >
                                     {
                                         searchResults.map((item, index) => {
                                             return (
-                                                <IonItem lines={"full"} key={index}>
+                                                <IonItem color={"light"} lines={"full"} key={index}>
                                                     <IonThumbnail slot={"start"}>
                                                         <IonImg src={item.image}></IonImg>
                                                     </IonThumbnail>
@@ -331,7 +262,7 @@ const Home: React.FC = () => {
                                             )
                                         })
                                     }
-                                </IonList>
+                                </div>
                             </div>
                         </IonCol>
                     </IonRow>
@@ -345,10 +276,9 @@ const Home: React.FC = () => {
                 selectedSongs.length > 0 && (
                     <IonFooter>
                         <IonToolbar>
-                            <IonBadge className={"ion-margin-start"} slot={"start"}
-                                      color={"warning"}>{selectedSongs.length}</IonBadge>
-                            <IonTitle slot={"start"} size={"small"}>
-                                Selected Songs</IonTitle>
+                            <IonLabel className={"ion-padding-start"} slot={"start"} >
+                                Selected Songs ({selectedSongs.length})
+                              </IonLabel>
                             <IonButton slot={"end"} fill={"clear"} className={"ion-margin-end"} shape={"round"}
                                        onClick={() => setModifyModal(true)}
                             >
@@ -362,7 +292,7 @@ const Home: React.FC = () => {
             <IonModal isOpen={modifyModal}
                       onDidDismiss={() => setModifyModal(false)}
             >
-                <IonHeader className={"ion-no-border"}>
+                <IonHeader>
                     <IonToolbar>
                         <IonButtons slot={"start"}>
                             <IonButton onClick={() => setModifyModal(false)}>
@@ -373,7 +303,7 @@ const Home: React.FC = () => {
                     </IonToolbar>
                     {Loading && <IonProgressBar type={"indeterminate"}></IonProgressBar>}
                 </IonHeader>
-                <IonContent fullscreen>
+                <IonContent fullscreen color={"light"}>
                     <IonHeader collapse="condense">
                         <IonToolbar>
                             <IonTitle size="large">Preview Selection</IonTitle>
@@ -383,8 +313,7 @@ const Home: React.FC = () => {
                         <IonRow className={"ion-align-items-center ion-justify-content-center"}>
                             <IonCol sizeXs={"12"} sizeSm={"12"} sizeMd="8">
                                 <div className={"ion-padding-vertical"}>
-                                    <IonList>
-                                        <IonListHeader>Selected Songs </IonListHeader>
+                                    <div>
                                         {
                                             selectedSongs.map((item, index) => {
                                                 return (
@@ -395,7 +324,7 @@ const Home: React.FC = () => {
                                                             </div>
                                                         </IonCol>
                                                         <IonCol>
-                                                            <IonItem lines={"full"} key={index}>
+                                                            <IonItem color={"light"} lines={"inset"} key={index}>
                                                                 <IonThumbnail slot={"start"}>
                                                                     <IonImg src={item.image}></IonImg>
                                                                 </IonThumbnail>
@@ -416,7 +345,7 @@ const Home: React.FC = () => {
                                                 )
                                             })
                                         }
-                                    </IonList>
+                                    </div>
                                 </div>
                             </IonCol>
                         </IonRow>
@@ -425,17 +354,17 @@ const Home: React.FC = () => {
 
                 <IonFooter>
                     <IonToolbar color={'transparent'}>
-                        <IonButton expand={"block"} onClick={() => {
+                        <IonButton shape={"round"}  expand={"block"} onClick={() => {
                             saveRecommendations().then(() => {
                                 resetSelection()
                                 showAppreciation();
-                                notifyMe(`${selectedSongs.length} have been recommended. Click to view 💃`)
+                                // notifyMe(`${selectedSongs.length} have been recommended. Click to view 💃`)
                             }).catch(e => {
+                                // showError()
                                 console.log(e)
-                                showError()
                             })
                         }}
-                                   className={"ion-margin-horizontal"}>Recommend</IonButton>
+                                   className={"ion-margin-horizontal"}>Recommend - ({selectedSongs.length})</IonButton>
                     </IonToolbar>
                 </IonFooter>
             </IonModal>

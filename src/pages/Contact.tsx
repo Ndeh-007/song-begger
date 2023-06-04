@@ -62,7 +62,7 @@ const Contact: React.FC = () => {
                     <IonTitle>Contact</IonTitle>
                 </IonToolbar>
             </IonHeader>
-            <IonContent fullscreen>
+            <IonContent color={"light"} fullscreen>
                 <IonHeader collapse="condense">
                     <IonToolbar>
                         <IonTitle size="large">Contact</IonTitle>
