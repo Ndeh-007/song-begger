@@ -1,17 +1,17 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  setupIonicReact
+    IonApp,
+    IonIcon,
+    IonLabel,
+    IonRouterOutlet,
+    IonTabBar,
+    IonTabButton,
+    IonTabs,
+    setupIonicReact
 } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import {chatbubble ,grid,  search} from 'ionicons/icons';
+import {IonReactRouter} from '@ionic/react-router';
+import {chatbubble, grid, search} from 'ionicons/icons';
 import Home from './pages/Home';
 import Recommended from './pages/Recommended';
 import Contact from './pages/Contact';
@@ -35,43 +35,47 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
+import {GlobalStateProvider} from "./Global";
+
 setupIonicReact();
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet >
-          <Route path="/" >
-            <Redirect path={"/home"} exact to={"/home"}/>
-          </Route>
-          <Route path="/home">
-            <Home />
-          </Route>
-          <Route  path="/recommended">
-            <Recommended />
-          </Route>
-          <Route path="/contact">
-            <Contact />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="homeTab" href="/home">
-            <IonIcon aria-hidden="true" icon={search} />
-            <IonLabel>Search</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="recommendedTab" href="/recommended">
-            <IonIcon aria-hidden="true" icon={grid} />
-            <IonLabel>Recommended</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="contactTab" href="/contact">
-            <IonIcon aria-hidden="true" icon={chatbubble} />
-            <IonLabel>Contact</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
+    <IonApp>
+        <GlobalStateProvider>
+            <IonReactRouter>
+                <IonTabs>
+                    <IonRouterOutlet>
+                        <Route path="/home">
+                            <Home/>
+                        </Route>
+                        <Route path="/recommended">
+                            <Recommended/>
+                        </Route>
+                        <Route path="/contact">
+                            <Contact/>
+                        </Route>
+                    </IonRouterOutlet>
+                    <IonTabBar slot="bottom">
+                        <IonTabButton tab="homeTab" href="/home">
+                            <IonIcon aria-hidden="true" icon={search}/>
+                            <IonLabel>Search</IonLabel>
+                        </IonTabButton>
+                        <IonTabButton tab="recommendedTab" href="/recommended">
+                            <IonIcon aria-hidden="true" icon={grid}/>
+                            <IonLabel>Recommended</IonLabel>
+                        </IonTabButton>
+                        <IonTabButton tab="contactTab" href="/contact">
+                            <IonIcon aria-hidden="true" icon={chatbubble}/>
+                            <IonLabel>Contact</IonLabel>
+                        </IonTabButton>
+                    </IonTabBar>
+                </IonTabs>
+                <Route path="/">
+                    <Redirect to={"/home"}/>
+                </Route>
+            </IonReactRouter>
+        </GlobalStateProvider>
+    </IonApp>
 );
 
 export default App;

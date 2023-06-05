@@ -34,13 +34,15 @@ import {
     close,
     closeSharp,
     notifications,
-    options,
+    options, play, playBack,
 } from "ionicons/icons";
 import {ISong} from "../Interface";
 import ExploreContainer from "../components/ExploreContainer";
 import {addRecommendationsToFirestore, ListenForRecommendationsFromRealTimeDatabase} from "../api/manageData";
 import axios from "axios";
 import {LocalImages} from "../images/Images";
+import PlayerBar from "../components/PlayerBar";
+import {useGlobalStateContext} from "../Global";
 
 const Home: React.FC = () => {
     const [modifyModal, setModifyModal] = useState(false)
@@ -52,6 +54,10 @@ const Home: React.FC = () => {
     const [searchResults, setSearchResults] = useState<ISong[]>([])
     const [selectedSongs, setSelectedSongs] = useState<ISong[]>([])
     const [Toast] = useIonToast()
+    const GLOBAL_OPTIONS = useGlobalStateContext()
+
+    const LOCALHOST = "http://localhost:3001";
+    const LIVE = "https://song-begger-server-production.up.railway.app/";
 
     async function init() {
         const data = await ListenForRecommendationsFromRealTimeDatabase()
@@ -123,7 +129,7 @@ const Home: React.FC = () => {
         if (value == '') {
             return
         }
-        const res = await axios.post("https://song-begger-server-production.up.railway.app/", {keywords: value, api: targetAPI.toLocaleLowerCase()});
+        const res = await axios.post(LOCALHOST, {keywords: value, api: targetAPI.toLocaleLowerCase()});
         const songs = res.data as ISong[]
         if (Array.isArray(songs)) {
             setSearchResults(songs)
@@ -141,6 +147,17 @@ const Home: React.FC = () => {
             setSelectedSongs(newArr)
         }
     }
+
+    function playSelection(song:ISong){
+        GLOBAL_OPTIONS.dispatch({
+            dataType:"player",
+            payload:{
+                song,
+                state:true
+            }
+        })
+    }
+
     useEffect(() => {
         // requestBrowserNotificationPermission()
         init().then(() => {
@@ -153,7 +170,7 @@ const Home: React.FC = () => {
 
 
     return (
-        <IonPage>
+        <IonPage color={"light"}>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Search</IonTitle>
@@ -244,11 +261,11 @@ const Home: React.FC = () => {
                     <IonRow className={"ion-align-items-center ion-justify-content-center"}>
                         <IonCol sizeXs={"12"} sizeSm={"12"} sizeMd="8">
                             <div>
-                                <div >
+                                <div>
                                     {
                                         searchResults.map((item, index) => {
                                             return (
-                                                <IonItem color={"light"} lines={"full"} key={index}>
+                                                <IonItem color={"light"} lines={"full"} button key={index} onClick={()=>playSelection(item)}>
                                                     <IonThumbnail slot={"start"}>
                                                         <IonImg src={item.image}></IonImg>
                                                     </IonThumbnail>
@@ -256,8 +273,18 @@ const Home: React.FC = () => {
                                                         <IonCardTitle>{item.title}</IonCardTitle>
                                                         <IonCardSubtitle>{item.artist}</IonCardSubtitle>
                                                     </IonCardHeader>
-                                                    <IonCheckbox slot={'end'}
-                                                                 onIonChange={(e) => handleCheckState(item, e.detail.checked)}></IonCheckbox>
+                                                    <IonButtons slot={"end"}>
+                                                        <IonButton onClick={(e)=>{
+                                                            e.stopPropagation()
+                                                        }}>
+                                                            <IonCheckbox slot={'end'}
+                                                                         onClick={(e)=>{
+                                                                             e.stopPropagation()
+                                                                         }}
+                                                                         onIonChange={(e) => handleCheckState(item, e.detail.checked)}
+                                                            ></IonCheckbox>
+                                                        </IonButton>
+                                                    </IonButtons>
                                                 </IonItem>
                                             )
                                         })
@@ -272,6 +299,8 @@ const Home: React.FC = () => {
                     searchResults.length == 0 && <ExploreContainer name={"No Results"}/>
                 }
             </IonContent>
+
+            <PlayerBar/>
             {
                 selectedSongs.length > 0 && (
                     <IonFooter>
