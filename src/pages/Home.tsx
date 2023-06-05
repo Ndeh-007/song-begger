@@ -43,7 +43,6 @@ import axios from "axios";
 import {LocalImages} from "../images/Images";
 import PlayerBar from "../components/PlayerBar";
 import {useGlobalStateContext} from "../Global";
-import {AudioPlayerProvider} from "react-use-audio-player";
 
 const Home: React.FC = () => {
     const [modifyModal, setModifyModal] = useState(false)
@@ -73,7 +72,12 @@ const Home: React.FC = () => {
     }
 
     function resetSelection() {
-        // setSelectedSongs([])
+        const arr = [...selectedSongs]
+        for (const item of arr){
+            const cb = document.getElementById(item.id) as HTMLIonCheckboxElement
+            cb.checked = false
+        }
+        setSelectedSongs([])
         setModifyModal(false)
     }
 
@@ -98,12 +102,12 @@ const Home: React.FC = () => {
         setLoading(false)
     }
 
-    function showAlert(message: string) {
+    function showAlert(message: string, position:"top"|"middle"|"bottom"= "top", header="Just so you know...") {
         Toast({
             color: "light",
             message,
-            header: "Just so you know...",
-            position: "top",
+            header,
+            position: position,
             buttons: [
                 {
                     role: 'cancel',
@@ -115,6 +119,7 @@ const Home: React.FC = () => {
             ],
         }).catch(e => console.log(e))
     }
+
     async function saveRecommendations() {
         setLoading(true)
         for (const song of selectedSongs) {
@@ -279,6 +284,7 @@ const Home: React.FC = () => {
                                                             e.stopPropagation()
                                                         }}>
                                                             <IonCheckbox slot={'end'}
+                                                                         id={item.id}
                                                                          onClick={(e)=>{
                                                                              e.stopPropagation()
                                                                          }}
