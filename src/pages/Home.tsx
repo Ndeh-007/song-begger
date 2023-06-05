@@ -43,6 +43,7 @@ import axios from "axios";
 import {LocalImages} from "../images/Images";
 import PlayerBar from "../components/PlayerBar";
 import {useGlobalStateContext} from "../Global";
+import {AudioPlayerProvider} from "react-use-audio-player";
 
 const Home: React.FC = () => {
     const [modifyModal, setModifyModal] = useState(false)
@@ -300,7 +301,7 @@ const Home: React.FC = () => {
                 }
             </IonContent>
 
-            <PlayerBar/>
+            {  GLOBAL_OPTIONS.GlobalState.PLAYER_CONTROLS.state && <AudioPlayerProvider> <PlayerBar/></AudioPlayerProvider>}
             {
                 selectedSongs.length > 0 && (
                     <IonFooter>

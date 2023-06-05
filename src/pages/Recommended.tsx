@@ -19,6 +19,7 @@ import {useGlobalStateContext} from "../Global";
 import PlayerBar from "../components/PlayerBar";
 import {arrowRedo, closeSharp, copy, ellipsisVertical, notifications} from "ionicons/icons";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {AudioPlayerProvider} from "react-use-audio-player";
 
 const Recommended: React.FC = () => {
     const [Songs, setSongs] = useState<ISong[]>([])
@@ -170,8 +171,9 @@ const Recommended: React.FC = () => {
                 {
                     Songs.length == 0 && <ExploreContainer name={"No Songs"}/>
                 }
-            </IonContent>
-            <PlayerBar/>
+            </IonContent> {GLOBAL_OPTIONS.GlobalState.PLAYER_CONTROLS.state &&
+            <AudioPlayerProvider> <PlayerBar/></AudioPlayerProvider>}
+
         </IonPage>
     );
 };

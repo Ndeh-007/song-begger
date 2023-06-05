@@ -114,17 +114,17 @@ const PlayerBar: React.FC = () => {
                                 <IonButton disabled>
                                     <IonLabel className={"ion-text-lowercase"}>30s</IonLabel>
                                 </IonButton>
-                                {!PlaySong ? <IonButton color={"dark"} onClick={(e) => {
-                                    playSong()
-                                    e.stopPropagation()
-                                }}>
-                                    <IonIcon icon={play}></IonIcon>
-                                </IonButton> : <IonButton color={"dark"} onClick={(e) => {
-                                    pauseSong()
-                                    e.stopPropagation()
-                                }}>
-                                    <IonIcon icon={pause}></IonIcon>
-                                </IonButton>}
+                                {/*{!PlaySong ? <IonButton color={"dark"} onClick={(e) => {*/}
+                                {/*    playSong()*/}
+                                {/*    e.stopPropagation()*/}
+                                {/*}}>*/}
+                                {/*    <IonIcon icon={play}></IonIcon>*/}
+                                {/*</IonButton> : <IonButton color={"dark"} onClick={(e) => {*/}
+                                {/*    pauseSong()*/}
+                                {/*    e.stopPropagation()*/}
+                                {/*}}>*/}
+                                {/*    <IonIcon icon={pause}></IonIcon>*/}
+                                {/*</IonButton>}*/}
                                 <IonButton onClick={() => closePlayer()}>
                                     <IonIcon icon={close} slot={"icon-only"}></IonIcon>
                                 </IonButton>

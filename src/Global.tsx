@@ -1,6 +1,5 @@
 import {IGlobalState, IGlobalStateStore, IPlayerControlOptions, IReducerOptions} from "./Interface";
 import React, {createContext, useContext, useReducer} from "react";
-import {flame} from "ionicons/icons";
 
 const GlobalReducer = (state: IGlobalState, Options: IReducerOptions) => {
     const newState = {...state};
@@ -16,6 +15,7 @@ const GlobalReducer = (state: IGlobalState, Options: IReducerOptions) => {
         default:
             throw new Error("Global context update error");
     }
+
     return newState;
 };
 
