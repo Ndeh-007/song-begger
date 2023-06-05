@@ -129,7 +129,7 @@ const Home: React.FC = () => {
         if (value == '') {
             return
         }
-        const res = await axios.post(LOCALHOST, {keywords: value, api: targetAPI.toLocaleLowerCase()});
+        const res = await axios.post(LIVE, {keywords: value, api: targetAPI.toLocaleLowerCase()});
         const songs = res.data as ISong[]
         if (Array.isArray(songs)) {
             setSearchResults(songs)
