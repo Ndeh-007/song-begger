@@ -301,7 +301,7 @@ const Home: React.FC = () => {
                 }
             </IonContent>
 
-            {  GLOBAL_OPTIONS.GlobalState.PLAYER_CONTROLS.state && <AudioPlayerProvider> <PlayerBar/></AudioPlayerProvider>}
+            {  GLOBAL_OPTIONS.GlobalState.PLAYER_CONTROLS.state &&  <PlayerBar/> }
             {
                 selectedSongs.length > 0 && (
                     <IonFooter>

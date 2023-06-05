@@ -172,7 +172,7 @@ const Recommended: React.FC = () => {
                     Songs.length == 0 && <ExploreContainer name={"No Songs"}/>
                 }
             </IonContent> {GLOBAL_OPTIONS.GlobalState.PLAYER_CONTROLS.state &&
-            <AudioPlayerProvider> <PlayerBar/></AudioPlayerProvider>}
+             <PlayerBar/> }
 
         </IonPage>
     );
